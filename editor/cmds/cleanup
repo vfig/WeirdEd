@@ -1,0 +1,4 @@
+unset ed_go_cmd
+unset ed_go2_cmd
+unset ed_stop_cmd
+unset ed_make_last_id

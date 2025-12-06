@@ -1,0 +1,47 @@
+DML1
+
+Create "fnord" "Ed"
+{
+    +ObjProp "Position"
+    {
+    	"Location" 0.000, 0.000, -4.000
+    	"Heading" d400
+    	"Pitch" 1800
+    	"Bank" e000
+    }
+
+    +ObjProp "Scripts"
+    {
+    	"Script 0" "EditorTool"
+    	"Script 1" ""
+    	"Script 2" ""
+    	"Script 3" ""
+    	"Don't Inherit" FALSE
+    }
+}
+
+// Create "fnord" "EdCursor"
+// {
+//     +ObjProp "Position"
+//     {
+//         "Location" 0.000, 0.000, 0.000
+//         "Heading" 0000
+//         "Pitch" 0000
+//         "Bank" 0000
+//     }
+// 
+//     +ObjProp "ModelName"
+//     {
+//         "" "edcursor"
+//     }
+// 
+//     +ObjProp "RenderType"
+//     {
+//         "" "Unlit"
+//     }
+// 
+//     +ObjProp "DiffDestroy"
+//     {
+//         "quest var values" "0, 1, 2"
+//     }
+// }

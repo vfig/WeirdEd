@@ -1,0 +1,15 @@
+; HACK: Abuses hilight and the HTHModeOverride property to leave a sentinel
+;       on the currently selected object (if any), so that a squirrel script
+;       can identify it. You must run `end_objid` afterwards to clean up.
+;
+; -- Sanity checking variable.
+ifdef ed_debug ifdef ed_do_objid mprint WARNING: end_objid cleanup script was not run!
+ifdef ed_debug set ed_do_objid
+; -- In case something went wrong previously, wipe the property from all objects.
+hilight_clear
+hilight_by_prop_direct HTHModeOverride
+hilight_rem_prop HTHModeOverride
+; --  Add HTHModeOverride to the selected brush (if its an object)
+hilight_clear
+hilight_brush
+hilight_add_prop HTHModeOverride

@@ -1,0 +1,5 @@
+; To be used with `begin_objid` cmd script.
+; -- Clean up our mess.
+hilight_rem_prop HTHModeOverride
+hilight_clear
+ifdef ed_debug unset ed_do_objid

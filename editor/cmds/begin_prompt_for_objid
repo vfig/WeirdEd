@@ -1,0 +1,8 @@
+hilight_clear
+hilight_by_prop_direct HTHModeOverride
+hilight_rem_prop HTHModeOverride
+hilight_clear
+hilight_brush
+;hilight_brush @@brush_id
+mprint :: prop hackery
+hilight_add_prop HTHModeOverride

@@ -1,0 +1,14 @@
+DML1
+
+CreateArch "Decorative" "Cable"
+
+// Physics->Model->Type
++ObjProp "Cable" "PhysType"
+{
+    "Type" "None"
+    "# Submodels" 1
+    "Remove on Sleep" FALSE
+    "Special" FALSE
+}
+
++MetaProp "Cable" "MatVegetation"
