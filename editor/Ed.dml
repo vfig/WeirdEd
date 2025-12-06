@@ -20,28 +20,28 @@ Create "fnord" "Ed"
     }
 }
 
-// Create "fnord" "EdCursor"
-// {
-//     +ObjProp "Position"
-//     {
-//         "Location" 0.000, 0.000, 0.000
-//         "Heading" 0000
-//         "Pitch" 0000
-//         "Bank" 0000
-//     }
-// 
-//     +ObjProp "ModelName"
-//     {
-//         "" "edcursor"
-//     }
-// 
-//     +ObjProp "RenderType"
-//     {
-//         "" "Unlit"
-//     }
-// 
-//     +ObjProp "DiffDestroy"
-//     {
-//         "quest var values" "0, 1, 2"
-//     }
-// }
+Create "fnord" "EdCursor"
+{
+    +ObjProp "Position"
+    {
+        "Location" 0.000, 0.000, 0.000
+        "Heading" 0000
+        "Pitch" 0000
+        "Bank" 0000
+    }
+
+    +ObjProp "ModelName"
+    {
+        "" "edcursor"
+    }
+
+    +ObjProp "RenderType"
+    {
+        "" "Unlit"
+    }
+
+    +ObjProp "DiffPermit"
+    {
+        "quest var values" "[None]"
+    }
+}

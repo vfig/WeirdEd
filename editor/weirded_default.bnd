@@ -1,0 +1,7 @@
+; Add the following lines to the end of your `Default.bnd`. Feel free to change
+; these keybinds if something else suits you better, but note that the scripts
+; are hardcoded to mention these binds in monolog messages.
+
+edit bind g "run_cmd_script editor/cmds/go.cmd"     ; run current editor go-command.
+edit bind g+shift "run_cmd_script editor/cmds/goagain.cmd"  ; run current editor go-again-command.
+edit bind g+ctrl "run_cmd_script editor/cmds/stop.cmd"  ; run current editor stop-command.
