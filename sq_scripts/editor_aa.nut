@@ -81,7 +81,7 @@ class EditorTool extends SqRootScript
 editor_cmd_help_help <- "help,<command>: print help text for a script command.";
 function editor_cmd_help(command, param2) {
     if(command==null) {
-        editor_cmd_list_commands(null);
+        editor_cmd_list_commands(null, null);
         return;
     }
     local key = "editor_cmd_"+command+"_help";
