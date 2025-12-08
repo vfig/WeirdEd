@@ -1,7 +1,7 @@
 WeirdEd - a mod for DromEd
 ==========================
 
-This mod uses squirrel scripts to do stuff in edit mode in NewDark DromEd.
+This mod uses squirrel scripts to do stuff in edit mode in NewDark DromEd. It requires NewDark v1.28 or later.
 
 Installing the mod
 ------------------
@@ -40,4 +40,18 @@ To create a cable:
 
 Each cable segment will be created with the currently selected cable width (default is 1). If you want to use a different thickness of cable, use **WeirdEd**->**Cable**->**Set Width ...** before creating a segment.
 
+### Adjusting the last segment
+
 If, just after creating a cable segment you realise it is in the wrong place or is the wrong width, you can correct it. If you need to change its start point, move the pink cursor; if you need to change its endpoint, move the orange 'EdMarker2'; if you need to change its width, use the **Set Width ...** menu again. Then, press **Shift+G** (or choose **WeirdEd**->**Cable**->**Redo last**) to update the last placed segment.
+
+### Adding segments at the other end
+
+The yellow 'EdMarker3' is used to mark where the current cable run started from. If you want to add cable segments at that end instead, choose **WeirdEd**->**Cable**->**Swap active end**.
+
+### Adding to a previously placed cable
+
+If you have a previously placed cable that you want to add cables to, select it, and choose **WeirdEd**->**Cable**->**Resume selected cable**. Then add segments as in steps 3 and 4 above.
+
+### Selecting a whole cable run
+
+Select a single cable, and choose **WeirdEd**->**Select**->**Cable Run**. This will select all cables connected to that one, in a multibrush.
