@@ -1,0 +1,2 @@
+script_ping Ed,cable_swap_ends
+find_obj EdCursor

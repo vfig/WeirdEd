@@ -19,10 +19,10 @@ class EditorTool extends SqRootScript
         return o;
     }
 
-    static function GetMarker(num=1) {
+    static function GetMarker(num=1, create=true) {
         local name = "EdMarker"+num;
         local o = Object.Named(name);
-        if (o==0) {
+        if (o==0 && create) {
             o = Object.Create("fnord");
             Object.SetName(o, name);
             Property.SetSimple(o, "ModelName", "edmarker"+num);

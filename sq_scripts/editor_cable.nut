@@ -5,10 +5,12 @@ if (Version.IsEditor()!=1) {
     return;
 }
 
+editor_cmd_cable_start_help <- "Place EdMarker1 at EdCursor position.";
 function editor_cmd_cable_start(_ignored1, _ignored2) {
     local cursor = EditorTool.GetCursor();
     local marker1 = EditorTool.GetMarker(1);
-    if (cursor==0 || marker1==0)
+    local marker3 = EditorTool.GetMarker(3);
+    if (cursor==0 || marker1==0 || marker3==0)
         return;
     local pos = Object.Position(cursor);
     if (pos.x==0 && pos.y==0 && pos.z==0) {
@@ -18,23 +20,27 @@ function editor_cmd_cable_start(_ignored1, _ignored2) {
         return;
     }
     Object.Teleport(marker1, vector(), vector(), cursor);
+    Object.Teleport(marker3, vector(), vector(), cursor);
     print("## Move cursor to cable endpoint and press go (G)");
 }
 
+editor_cmd_cable_segment_help <- "Create a Cable between EdMarker1 and EdCursor."
 function editor_cmd_cable_segment(param1, _ignored2) {
-    local cursor = EditorTool.GetCursor();
-    local marker1 = EditorTool.GetMarker(1);
-    local marker2 = EditorTool.GetMarker(2);
-    if (cursor==0 || marker1==0 || marker2==0)
-        return;
-
     local width = config_get_int("ed_cable_width", 1);
 
     local adjustid = 0;
     if (param1=="redo") {
         adjustid = config_get_int("ed_make_last_id", 0);
+        if (adjustid==0)
+            return;
     }
     local isRedo = (adjustid!=0);
+
+    local cursor = EditorTool.GetCursor();
+    local marker1 = EditorTool.GetMarker(1);
+    local marker2 = EditorTool.GetMarker(2);
+    if (cursor==0 || marker1==0 || marker2==0)
+        return;
 
     local fromPos = isRedo? Object.Position(marker2) : Object.Position(marker1);
     local toPos = Object.Position(cursor);
@@ -49,13 +55,34 @@ function editor_cmd_cable_segment(param1, _ignored2) {
     print("## Press go (G) for next, redo (Shift+G) to adjust last, stop (Ctrl+G) to finish.");
 }
 
+editor_cmd_cable_segment_help <- "Clean up EdMarker1 and EdMarker2."
 function editor_cmd_cable_finish(_ignored1, _ignored2) {
-    local marker1 = EditorTool.GetMarker(1);
-    local marker2 = EditorTool.GetMarker(2);
-    if (marker1) Object.Teleport(marker1, vector(), vector(), 0);
-    if (marker2) Object.Teleport(marker2, vector(), vector(), 0);
+    local marker1 = EditorTool.GetMarker(1, false);
+    local marker2 = EditorTool.GetMarker(2, false);
+    local marker3 = EditorTool.GetMarker(3, false);
+    if (marker1) Object.Destroy(marker1);
+    if (marker2) Object.Destroy(marker2);
+    if (marker3) Object.Destroy(marker3);
 
     print("## Cable stopped. Have a nice day!");
+}
+
+editor_cmd_cable_swap_ends_help <- "Swap EdMarker1 and EdMarker2, and reposition EdCursor."
+function editor_cmd_cable_swap_ends(_ignored1, _ignored2) {
+    local cursor = EditorTool.GetCursor();
+    local marker1 = EditorTool.GetMarker(1, false);
+    local marker3 = EditorTool.GetMarker(3, false);
+    if (cursor==0 || marker1==0 || marker3==0)
+        return;
+
+    // Redo won't work after a swap, so prevent it.
+    local marker2 = EditorTool.GetMarker(2, false);
+    if (marker2) Object.Destroy(marker2);
+    Debug.Command("unset ed_make_last_id");
+
+    Object.Teleport(cursor, vector(), vector(), marker3);
+    Object.Teleport(marker3, vector(), vector(), marker1);
+    Object.Teleport(marker1, vector(), vector(), cursor);
 }
 
 class EdCable
