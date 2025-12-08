@@ -32,6 +32,29 @@ class EditorTool extends SqRootScript
         return o;
     }
 
+    static function FindSelectedObj() {
+        // Return the selected objid, or 0 if no object is selected. Requires the
+        // `begin_objid` cmd script to be run immediately before, and the `end_objid`
+        // cmd script to be run immediately after.
+
+        if (Engine.ConfigIsDefined("ed_debug")) {
+            if (! Engine.ConfigIsDefined("ed_do_objid")) {
+                print("WARNING: begin_objid setup script was not run!");
+                return 0;
+            }
+        }
+
+        local selected = 0;
+        for (local o=1; o<9000; ++o) {
+            if (Object.Exists(o)
+            && Property.PossessedSimple(o, "HTHModeOverride")) {
+                selected = o;
+                break;
+            }
+        }
+        return selected;
+    }
+
     function OnBeginScript() {
         if (Version.IsEditor()==1) {
             // Cleanup variables that refer to object ids when

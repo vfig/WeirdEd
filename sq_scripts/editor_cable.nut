@@ -67,7 +67,7 @@ function editor_cmd_cable_finish(_ignored1, _ignored2) {
     print("## Cable stopped. Have a nice day!");
 }
 
-editor_cmd_cable_swap_ends_help <- "Swap EdMarker1 and EdMarker2, and reposition EdCursor."
+editor_cmd_cable_swap_ends_help <- "Swap EdMarker1 and EdMarker3, and reposition EdCursor."
 function editor_cmd_cable_swap_ends(_ignored1, _ignored2) {
     local cursor = EditorTool.GetCursor();
     local marker1 = EditorTool.GetMarker(1, false);
@@ -85,23 +85,55 @@ function editor_cmd_cable_swap_ends(_ignored1, _ignored2) {
     Object.Teleport(marker1, vector(), vector(), cursor);
 }
 
+editor_cmd_cable_resume_help <- "Set markers around selected Cable.";
+function editor_cmd_cable_resume(_ignored1, _ignored2) {
+    local objid = EditorTool.FindSelectedObj();
+    local info = EdCable.GetSegmentInfo(objid);
+    if (info==null) {
+        Debug.Command("set ed_abort");
+        return;
+    }
+
+    local cursor = EditorTool.GetCursor();
+    local marker1 = EditorTool.GetMarker(1);
+    local marker2 = EditorTool.GetMarker(2);
+    local marker3 = EditorTool.GetMarker(3);
+    if (cursor==0 || marker1==0 || marker2==0 || marker3==0)
+        return;
+
+    Object.Teleport(cursor, info.position[1], info.facing[1], 0);
+    Object.Teleport(marker1, info.position[1], info.facing[1], 0);
+    Object.Teleport(marker2, info.position[0], info.facing[0], 0);
+    Object.Teleport(marker3, info.position[0], info.facing[0], 0);
+
+    Debug.Command("set ed_make_last_id "+objid);
+    Debug.Command("set ed_cable_width "+info.width);
+
+    print("## Move cursor to cable endpoint and press go (G)");
+}
+
 class EdCable
 {
     static function FindBestDef(width, length) {
-        local result = {
-            model="",
-            width=0,
-            length=0,
-        };
+        local result = null;
         local bestLength = 99999;
         foreach (def in EDITOR_CABLE_DEFS) {
             if (def.width!=width)
                 continue;
             if (abs(def.length-length)<abs(bestLength-length)) {
                 bestLength = def.length;
-                result.model = def.model;
-                result.width = def.width;
-                result.length = def.length;
+                result = clone def;
+            }
+        }
+        return result;
+    }
+
+    static function FindDefByModel(model) {
+        local result = null;
+        foreach (def in EDITOR_CABLE_DEFS) {
+            if (def.model==model) {
+                result = clone def;
+                break;
             }
         }
         return result;
@@ -121,14 +153,14 @@ class EdCable
             return 0;
         }
 
-        local result = FindBestDef(width, distance);
-        if (result.width==0) {
+        local def = FindBestDef(width, distance);
+        if (def==null) {
             print("Error: No matching cable models with width:"+width+".");
             return 0;
         }
 
         local pos = fromPos+delta*0.5;
-        local scale = distance/result.length;
+        local scale = distance/def.length;
         local dir = delta.GetNormalized();
         local dirxy = vector(dir.x,dir.y,0.0);
         local fac = vector();
@@ -150,7 +182,7 @@ class EdCable
             return 0;
         }
         Object.Teleport(o, pos, fac, 0);
-        Property.SetSimple(o, "ModelName", result.model);
+        Property.SetSimple(o, "ModelName", def.model);
         Property.SetSimple(o, "Scale", vector(1,1,1)*scale);
 
         // If it inherited PhysType, then it will have the wrong auto dimensions,
@@ -163,11 +195,30 @@ class EdCable
 
         local didWhat = (didCreate? "Created" : "Adjusted");
         print(didWhat+" a "+Object.GetName(arch)+" ("+o+")"
-            +" width:"+result.width
-            +" length:"+result.length
+            +" width:"+def.width
+            +" length:"+def.length
             +" from:"+fromPos
             +" to:"+toPos
             +" (a distance of "+distance+")");
         return o;
+    }
+
+    static function GetSegmentInfo(o) {
+        if (o==0 || ! Object.InheritsFrom(o, "Cable"))
+            return null;
+
+        local model = Property.Get(o, "ModelName");
+        local def = FindDefByModel(model)
+        if (def==null)
+            return null;
+
+        local tail = Object.ObjectToWorld(o, vector(-0.5*def.length,0,0));
+        local head = Object.ObjectToWorld(o, vector(0.5*def.length,0,0));
+
+        return {
+            width=def.width,
+            position=[tail, head],
+            facing=[vector(), vector()],
+        };
     }
 }
