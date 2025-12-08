@@ -112,6 +112,20 @@ function editor_cmd_cable_resume(_ignored1, _ignored2) {
     print("## Move cursor to cable endpoint and press go (G)");
 }
 
+function editor_cmd_cable_find_group(_ignored1, _ignored2) {
+    local objid = EditorTool.FindSelectedObj();
+    local group = EdCable.FindGroup(objid);
+    if (group==null) {
+        Debug.Command("set ed_abort");
+        return;
+    }
+
+    foreach (o in group) {
+        MarkMultibrushObj(o);
+    }
+}
+
+
 class EdCable
 {
     static function FindBestDef(width, length) {
@@ -220,5 +234,63 @@ class EdCable
             position=[tail, head],
             facing=[vector(), vector()],
         };
+    }
+
+    static function FindGroup(o) {
+        if (o==0 || ! Object.InheritsFrom(o, "Cable"))
+            return null;
+
+        local makeKey = function(v) {
+            // Quantize to nearest half-foot.
+            local x = (2*v.x+0.5).tointeger();
+            local y = (2*v.y+0.5).tointeger();
+            local z = (2*v.z+0.5).tointeger();
+            return (""+x+","+y+","+z);
+        }
+
+        local lookup = {};
+        local cableKeys = {};
+        local allCables = AllConcretes("Cable");
+        foreach (cable in allCables) {
+            local info = GetSegmentInfo(cable);
+            if (info==null) continue;
+            local keys = [];
+            for (local i=0; i<2; ++i) {
+                local k = makeKey(info.position[i]);
+                keys.append(k);
+                if (k in lookup) {
+                    lookup[k].append(cable);
+                } else {
+                    lookup[k] <- [cable];
+                }
+            }
+            cableKeys[cable.tointeger()] <- keys;
+        }
+
+        local openKeys = [];
+        local closedKeys = {};
+        local connectedCables = {};
+        local addCable = function(cable) {
+            connectedCables[cable.tointeger()] <- true;
+            foreach (k in cableKeys[cable.tointeger()]) {
+                if (! (k in closedKeys)) {
+                    openKeys.push(k);
+                }
+            }
+        }
+        addCable(o);
+        while (openKeys.len()) {
+            local k = openKeys.pop();
+            closedKeys[k] <- true;
+            foreach (cable in lookup[k]) {
+                addCable(cable);
+            }
+        }
+
+        local group = [];
+        foreach (cable,_ in connectedCables) {
+            group.append(cable);
+        }
+        return group;
     }
 }

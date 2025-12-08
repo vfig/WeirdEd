@@ -105,10 +105,12 @@ function AllSubArchetypes(arch) {
     // Return an array of all descendent archetypes of `arch`.
     local archetypes = [];
     local queue = [arch];
+    local s = sLink();
     while (queue.len()>0) {
         local arch = queue.pop();
         foreach (link in Link.GetAll("~MetaProp", arch)) {
-            arch = LinkDest(link);
+            s.LinkGet(link);
+            arch = s.dest;
             if (arch<0) {
                 archetypes.append(arch);
                 queue.push(arch);
@@ -116,4 +118,28 @@ function AllSubArchetypes(arch) {
         }
     }
     return archetypes;
+}
+
+function AllDirectConcretes(arch) {
+    // Return an array of all direct concrete descendents of `arch`.
+    local concretes = [];
+    local s = sLink();
+    foreach (link in Link.GetAll("~MetaProp", arch)) {
+        s.LinkGet(link);
+        local o = s.dest;
+        if (o>0) {
+            concretes.append(o);
+        }
+    }
+    return concretes;
+}
+
+function AllConcretes(arch) {
+    // Return an array of all direct concrete descendents of `arch`.
+    local concretes = AllDirectConcretes(arch);
+    local archetypes = AllSubArchetypes(arch);
+    foreach (arch in archetypes) {
+        concretes.extend(AllDirectConcretes(arch));
+    }
+    return concretes;
 }

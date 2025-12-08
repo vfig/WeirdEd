@@ -1,0 +1,5 @@
+; To be used with EditorTool.MarkMultibrushObj()
+hilight_clear
+hilight_by_prop_direct HTHModeOverride
+multibrush_the_highlight
+hilight_clear

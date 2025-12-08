@@ -55,6 +55,16 @@ class EditorTool extends SqRootScript
         return selected;
     }
 
+    static function MarkMultibrushObj(o, mark=true) {
+        // Mark the given object for multibrush creation. Requires the
+        // `multibrush_objids` cmd script to be run immediately after.
+        if (mark) {
+            Property.Add(o, "HTHModeOverride");
+        } else {
+            Property.Remove(o, "HTHModeOverride");
+        }
+    }
+
     function OnBeginScript() {
         if (Version.IsEditor()==1) {
             // Cleanup variables that refer to object ids when
